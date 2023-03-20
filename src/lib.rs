@@ -1,7 +1,12 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 use codec::{Decode, Encode, MaxEncodedLen};
-use frame_support::{dispatch::DispatchResult, ensure, traits::Get, BoundedVec};
+use frame_support::{
+    dispatch::DispatchResult,
+    ensure,
+    traits::{Currency, Get, ReservableCurrency},
+    BoundedVec, PalletId,
+};
 use frame_system::{self as system};
 use fula_pool::PoolInterface;
 use libm::exp;
@@ -117,6 +122,11 @@ pub mod pallet {
     pub trait Config: frame_system::Config + sugarfunge_asset::Config {
         /// Because this pallet emits events, it depends on the runtime's definition of an event.
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
+
+        #[pallet::constant]
+        type PalletId: Get<PalletId>;
+
+        type Currency: Currency<Self::AccountId> + ReservableCurrency<Self::AccountId>;
 
         // Constant values
         #[pallet::constant]
